@@ -1,0 +1,62 @@
+@page
+@model IcarryVendor.Web.Pages.Account.LoginModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>登入 | iCarry Vendor 商家管理平台</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/sb-admin-2/sb-admin-2.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">商 家 管 理 平 台 登 入</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form method="post">
+                            <input type="hidden" asp-for="ReturnUrl" />
+                            <fieldset>
+                                <div class="form-group">
+                                    <label asp-for="Account" class="sr-only">帳號</label>
+                                    <input asp-for="Account" class="form-control" placeholder="帳號" autofocus autocomplete="username" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Password" class="sr-only">密碼</label>
+                                    <input asp-for="Password" class="form-control" placeholder="密碼" autocomplete="current-password" />
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input asp-for="RememberAccount" /> 記住我的帳號
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-lg btn-success btn-block">登入</button>
+                            </fieldset>
+                        </form>
+                        @if (TempData[IcarryVendor.Web.Pages.Account.LoginModel.NoticeKey] is string notice)
+                        {
+                            <div class="alert alert-success" role="status" style="margin-top:20px">@notice</div>
+                        }
+                        @if (Model.ErrorMessage is not null)
+                        {
+                            <div class="alert alert-warning" role="alert" style="margin-top:20px">
+                                <strong>@Model.ErrorMessage</strong>
+                            </div>
+                        }
+                        <h3><span class="label label-danger" style="width:100%;display:block;">* 請聯繫iCarry LINE群組</span></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+@{
+    // Menu of the legacy inc/sidebar.inc.php. Items whose Url is null are not ported yet and render disabled.
+    var productLinks = new (string Title, string? Url, string Icon, string Hint)[]
+    {
+        ("商品列表(所有商品)", null, "fa-list-ol", "上架商品會顯示於客戶端"),
+        ("商品列表(上架中)", Url.Page("/Products/Index", new { status = ProductStatus.OnShelf }), "fa-toggle-on", "上架商品會顯示於客戶端"),
+        ("商品列表(停售中)", Url.Page("/Products/Index", new { status = ProductStatus.Paused }), "fa-battery-empty", "暫時停止銷售，會顯示於客戶端"),
+        ("商品列表(待補貨)", Url.Page("/Products/Index", new { view = "out-of-stock" }), "fa-battery-empty", "庫存小於等於0，會顯示於客戶端"),
+        ("商品列表(建議補貨)", Url.Page("/Products/Index", new { view = "restock" }), "fa-battery-quarter", "庫存低於建議庫存 顯示於客戶端"),
+        ("商品列表(下架中)", Url.Page("/Products/Index", new { status = ProductStatus.OffShelf }), "fa-toggle-off", "未上架商品不會顯示於客戶端"),
+        ("商品列表(送審中)", Url.Page("/Products/Index", new { status = ProductStatus.InReview }), "fa-pause", "等iCarry審核"),
+        ("商品列表(尚未送審-草稿)", Url.Page("/Products/Index", new { status = ProductStatus.Draft }), "fa-floppy-o", "草稿，從未送審"),
+        ("商品列表(審核不通過)", Url.Page("/Products/Index", new { status = ProductStatus.Rejected }), "fa-user-times", "被iCarry退件"),
+        ("組合商品", null, "fa-archive", ""),
+    };
+    var orderLinks = new (string Title, string? Url, string Icon)[]
+    {
+        ("待出貨訂單", null, "fa-cart-arrow-down"),
+        ("已出貨訂單", null, "fa-check-square-o"),
+        ("已取消訂單", null, "fa-check-square-o"),
+    };
+    var current = Context.Request.Path + Context.Request.QueryString;
+    var productsOpen = Context.Request.Path.StartsWithSegments("/Products");
+}
+<div class="navbar-default sidebar" role="navigation">
+    <div class="sidebar-nav navbar-collapse">
+        <ul class="nav" id="side-menu">
+            <li>
+                <a asp-page="/Index"><i class="fa fa-dashboard fa-fw"></i> 首頁</a>
+            </li>
+            <li>
+                <span class="sidebar-pending"><i class="fa fa-shopping-bag fa-fw"></i> 商家管理 <small>（改寫中）</small></span>
+            </li>
+            <li class="@(productsOpen ? "active" : "")">
+                <a href="#"><i class="fa fa-product-hunt fa-fw"></i> 商品管理<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    @foreach (var link in productLinks)
+                    {
+                        <li>
+                            @if (link.Url is null)
+                            {
+                                <span class="sidebar-pending"><i class="fa @link.Icon"></i> @link.Title <small>（改寫中）</small></span>
+                            }
+                            else
+                            {
+                                <a href="@link.Url" class="@(link.Url == current ? "active" : "")"
+                                   data-toggle="tooltip" data-placement="right" data-container="body" title="@link.Hint">
+                                    <i class="fa @link.Icon"></i> @link.Title
+                                </a>
+                            }
+                        </li>
+                    }
+                </ul>
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-shopping-cart fa-fw"></i> 訂單管理<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    @foreach (var link in orderLinks)
+                    {
+                        <li><span class="sidebar-pending"><i class="fa @link.Icon"></i> @link.Title <small>（改寫中）</small></span></li>
+                    }
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>

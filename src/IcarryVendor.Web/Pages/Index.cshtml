@@ -1,0 +1,57 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "首頁";
+    var tiles = new (string Title, int Count, string Panel, string Icon, object Route)[]
+    {
+        ("上架中", Model.Counts.Count(ProductStatus.OnShelf), "panel-green", "fa-toggle-on", new { status = ProductStatus.OnShelf }),
+        ("建議補貨", Model.Counts.NeedsRestock, "panel-yellow", "fa-battery-quarter", new { view = "restock" }),
+        ("待補貨", Model.Counts.OutOfStock, "panel-red", "fa-battery-empty", new { view = "out-of-stock" }),
+        ("停售中", Model.Counts.Count(ProductStatus.Paused), "panel-red", "fa-pause-circle", new { status = ProductStatus.Paused }),
+        ("送審中", Model.Counts.Count(ProductStatus.InReview), "panel-primary", "fa-pause", new { status = ProductStatus.InReview }),
+        ("審核不通過", Model.Counts.Count(ProductStatus.Rejected), "panel-yellow", "fa-user-times", new { status = ProductStatus.Rejected }),
+        ("尚未送審(草稿)", Model.Counts.Count(ProductStatus.Draft), "panel-default", "fa-floppy-o", new { status = ProductStatus.Draft }),
+        ("下架中", Model.Counts.Count(ProductStatus.OffShelf), "panel-default", "fa-toggle-off", new { status = ProductStatus.OffShelf }),
+    };
+}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">首頁 <small>@Model.CurrentUser.VendorName</small></h1>
+    </div>
+</div>
+<div class="row status-tiles">
+    @foreach (var tile in tiles)
+    {
+        <div class="col-lg-3 col-md-6">
+            <div class="panel @tile.Panel">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3"><i class="fa @tile.Icon fa-4x"></i></div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">@tile.Count</div>
+                            <div>@tile.Title</div>
+                        </div>
+                    </div>
+                </div>
+                <a asp-page="/Products/Index" asp-all-route-data="@ToRouteData(tile.Route)">
+                    <div class="panel-footer">
+                        <span class="pull-left">查看商品</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <p class="text-muted">訂單統計會在訂單管理改寫完成後加入。</p>
+    </div>
+</div>
+
+@functions {
+    private static Dictionary<string, string> ToRouteData(object route) =>
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary(route)
+            .ToDictionary(kv => kv.Key, kv => Convert.ToString(kv.Value, System.Globalization.CultureInfo.InvariantCulture) ?? "");
+}
